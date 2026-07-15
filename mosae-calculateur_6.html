@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Mosae Collection — Calculateur</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Inconsolata:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<style>
+  :root{
+    --ecru:#F4EFE5; --encre:#1A1613; --pierre:#D9D2C3; --blue:#1E2FB8;
+    --red:#D7263D; --yellow:#F5C518; --grey:#8a8272; --greydark:#5c5648;
+  }
+  @font-face{
+    font-family:'Modino';
+    src:url(data:font/woff2;base64,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) format('woff2');
+    font-weight:400;
+    font-style:normal;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;min-height:100vh;background:var(--ecru);font-family:'DM Sans',sans-serif;color:var(--encre);}
+  #root{min-height:100vh;}
+  input,select,textarea{font-family:'DM Sans',sans-serif;color:var(--encre);background:#fff;border:0.5px solid var(--pierre);border-radius:6px;padding:10px 12px;font-size:14px;width:100%;}
+  input[type=checkbox]{width:auto;}
+  button{cursor:pointer;font-family:'DM Sans',sans-serif;}
+  .mono{font-family:'Inconsolata',monospace;}
+  .btn-primary{background:var(--blue);color:var(--ecru);border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:500;}
+  .btn-secondary{background:#fff;border:0.5px solid var(--pierre);border-radius:8px;padding:12px;font-size:14px;color:var(--encre);}
+  .btn-danger{background:transparent;border:0.5px solid var(--red);color:var(--red);border-radius:8px;padding:10px;font-size:13px;}
+  .card{background:#fff;border:0.5px solid var(--pierre);border-radius:10px;padding:1rem;}
+  .label{font-size:12px;color:var(--grey);display:block;margin-bottom:4px;}
+  .screen{max-width:480px;margin:0 auto;padding:1.5rem;min-height:100vh;}
+  .chip{background:var(--pierre);border-radius:8px;padding:10px 14px;text-align:center;font-family:'Inconsolata',monospace;font-size:15px;}
+  .row{display:flex;justify-content:space-between;align-items:center;}
+  h1,h2{font-weight:500;margin:0;}
+  .backbtn{background:transparent;border:none;color:var(--grey);font-size:13px;padding:0;margin-bottom:1rem;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<script type="text/babel" data-type="module">
+const {useState, useEffect, useRef} = React;
+
+// ---------- Storage helpers (Firestore-backed, synced across devices) ----------
+const firebaseConfig = {
+  apiKey: "AIzaSyDv8Jl1SjS8L4bnS5i-iQvRPVfjIMNgWZg",
+  authDomain: "mosae-collection.firebaseapp.com",
+  projectId: "mosae-collection",
+  storageBucket: "mosae-collection.firebasestorage.app",
+  messagingSenderId: "215790943539",
+  appId: "1:215790943539:web:38540b43c0c5a7f87cd246",
+  measurementId: "G-ZQSNX77BFT"
+};
+firebase.initializeApp(firebaseConfig);
+const firestore = firebase.firestore();
+const DB_DOC = firestore.collection("mosae").doc("db");
+
+function seedDB(){
+  return {
+    cires: [
+      {id:1, nom:"Cire de soja C3", ref:"CIRE-SOJA-C3-2KG", url:"", meche:"TCR", fonte:51, coulage:70, prix:19.99, qte:2000},
+      {id:2, nom:"Cire de colza", ref:"CIRE-COLZA-1KG", url:"", meche:"TCR", fonte:55, coulage:70, prix:8.50, qte:1000},
+    ],
+    meches: [
+      {id:1, nom:"TCR 24/12", gamme:"TCR", type:"Socle", diametre:4.8, hauteur:1.2, prix:8.90, qte:25},
+      {id:2, nom:"LX 16", gamme:"LX", type:"Bobine", diametre:3.5, hauteur:null, prix:6.50, qte:1},
+    ],
+    parfums: [
+      {id:1, nom:"Bois de Oud", fournisseur:"Terre de Bougies", ref:"PARF-BOISOUD-30ML", url:"", dosage:"6-12", pointEclair:58, noteTete:"Bergamote, safran", noteCoeur:"Rose, oud", noteFond:"Musc, patchouli", prix:14.90, qte:100},
+      {id:2, nom:"Fleur de coton Boost", fournisseur:"Terre de Bougies", ref:"PARF-BOOST-COTON", url:"", dosage:"1", pointEclair:60, noteTete:"", noteCoeur:"", noteFond:"", prix:16.90, qte:100},
+    ],
+    colorants: [
+      {id:1, nom:"Bleu foncé", hex:"#1B3A5C", marque:"Bekro", ref:"6103-51", prix:4.50, qte:10},
+      {id:2, nom:"Rouge foncé", hex:"#7A1F1F", marque:"Bekro", ref:"34/5647", prix:4.50, qte:10},
+    ],
+    additifs: [
+      {id:1, nom:"Stéarine", fournisseur:"Terre de Bougies", ref:"STEARINE-1KG", dosage:"10", prix:12.00, qte:1000},
+      {id:2, nom:"CS6000", fournisseur:"Le Petit Grassois", ref:"ADD-CS6000-500", dosage:"0.2-0.5", prix:45.75, qte:500},
+      {id:3, nom:"WW16", fournisseur:"Smellingood", ref:"WW16-70G", dosage:"0.02", prix:8.99, qte:70},
+      {id:4, nom:"Myristate d'isopropyle", fournisseur:"Terre de Bougies", ref:"MYRISTATE-100ML", dosage:"5-10", prix:9.90, qte:100},
+    ],
+    modeles: [
+      {id:1, nom:"PILL01", poids:300, formuleAvecParfum:null, formuleSansParfum:null},
+      {id:2, nom:"PILL02", poids:450, formuleAvecParfum:null, formuleSansParfum:null},
+      {id:3, nom:"PILL03", poids:380, formuleAvecParfum:null, formuleSansParfum:null},
+    ],
+    historique: [],
+    compteur: 0,
+  };
+}
+function saveDB(db){
+  DB_DOC.set(db).catch(err=>console.error("Erreur de sauvegarde Firestore:", err));
+}
+
+// ---------- Calculation engine ----------
+// Resolves: total = cirePure*(1+sum of wax-based additive %) + parfum + myristate(=%*parfum)
+function calcRecette({poids, parfumOn, parfumPct, myristatePct, stearinePct, cs6000Pct, ww16On, ww16Pct, colorantOn, colorantPct}){
+  let parfumG = 0, myristateG = 0;
+  if(parfumOn){
+    parfumG = poids * (parfumPct/100);
+    myristateG = parfumG * (myristatePct/100);
+  }
+  const reste = poids - parfumG - myristateG;
+  let factor = 1 + (stearinePct/100) + (cs6000Pct/100);
+  if(ww16On) factor += ww16Pct/100;
+  if(colorantOn) factor += colorantPct/100;
+  const cirePure = reste / factor;
+  const stearineG = cirePure * (stearinePct/100);
+  const cs6000G = cirePure * (cs6000Pct/100);
+  const ww16G = ww16On ? cirePure * (ww16Pct/100) : 0;
+  const colorantG = colorantOn ? cirePure * (colorantPct/100) : 0;
+  return {cirePure, stearineG, cs6000G, ww16G, colorantG, parfumG, myristateG};
+}
+
+function genCode(db, type, mecheRef){
+  const n = db.compteur + 1;
+  const xxx = String(n).padStart(3,"0");
+  const meche = (mecheRef||"").replace(/\s+/g,"");
+  const d = new Date();
+  const yy = String(d.getFullYear()).slice(2);
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  return `MC#${xxx}${type}-${meche}-${yy}${mm}${dd}`;
+}
+
+// ---------- Small UI helpers ----------
+function Stars({value, onChange, size=20}){
+  const [hover,setHover] = useState(0);
+  return (
+    <div style={{display:"flex",gap:4}}>
+      {[1,2,3,4,5].map(v=>(
+        <i key={v} className="ti ti-star" style={{fontSize:size,color:(hover||value)>=v?"#F5C518":"var(--pierre)",cursor:"pointer"}}
+          onMouseEnter={()=>setHover(v)} onMouseLeave={()=>setHover(0)} onClick={()=>onChange(v)}></i>
+      ))}
+    </div>
+  );
+}
+
+function PieChart({data}){
+  const ref = useRef(null);
+  const chartRef = useRef(null);
+  useEffect(()=>{
+    if(chartRef.current) chartRef.current.destroy();
+    chartRef.current = new Chart(ref.current, {
+      type:"doughnut",
+      data:{labels:data.map(d=>d.label), datasets:[{data:data.map(d=>d.value), backgroundColor:data.map(d=>d.color), borderColor:"#F4EFE5", borderWidth:2}]},
+      options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}
+    });
+    return ()=>{ if(chartRef.current) chartRef.current.destroy(); };
+  },[JSON.stringify(data)]);
+  return <div style={{position:"relative",width:"100%",height:200}}><canvas ref={ref}></canvas></div>;
+}
+
+// ---------- Screens ----------
+function Home({nav}){
+  return (
+    <div className="screen">
+      <div style={{textAlign:"center",marginBottom:"1.5rem"}}>
+        <h1 style={{fontSize:36,letterSpacing:1}}>
+          <span style={{fontFamily:"'Modino',sans-serif"}}>mosae</span>{" "}
+          <span style={{fontFamily:"'DM Sans',sans-serif",fontSize:16,fontWeight:400,letterSpacing:2,color:"var(--grey)"}}>collection</span>
+        </h1>
+        <p style={{fontSize:13,color:"var(--grey)",marginTop:4}}>Calculateur de bougies</p>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,display:"flex",alignItems:"center",gap:14}} onClick={()=>nav("libre-type")}>
+          <i className="ti ti-adjustments" style={{fontSize:24,color:"var(--blue)",flexShrink:0}}></i>
+          <div>
+            <div style={{fontWeight:500,fontSize:15}}>Créer en mode libre</div>
+            <div style={{fontSize:13,color:"var(--grey)",marginTop:4}}>Moulée ou coulée, cire et additifs personnalisés</div>
+          </div>
+        </button>
+        <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,display:"flex",alignItems:"center",gap:14}} onClick={()=>nav("formules")}>
+          <i className="ti ti-star" style={{fontSize:24,color:"var(--blue)",flexShrink:0}}></i>
+          <div>
+            <div style={{fontWeight:500,fontSize:15}}>Formules approuvées</div>
+            <div style={{fontSize:13,color:"var(--grey)",marginTop:4}}>Choisir un modèle validé et documenté</div>
+          </div>
+        </button>
+        <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,display:"flex",alignItems:"center",gap:14}} onClick={()=>nav("historique")}>
+          <i className="ti ti-history" style={{fontSize:24,color:"var(--grey)",flexShrink:0}}></i>
+          <div>
+            <div style={{fontWeight:500,fontSize:15}}>Historique des créations</div>
+            <div style={{fontSize:13,color:"var(--grey)",marginTop:4}}>Retrouver tes essais par code, date ou modèle</div>
+          </div>
+        </button>
+        <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,display:"flex",alignItems:"center",gap:14}} onClick={()=>nav("inventaire")}>
+          <i className="ti ti-box" style={{fontSize:24,color:"var(--grey)",flexShrink:0}}></i>
+          <div>
+            <div style={{fontWeight:500,fontSize:15}}>Gérer mon inventaire</div>
+            <div style={{fontSize:13,color:"var(--grey)",marginTop:4}}>Cires, mèches, parfums, colorants, additifs, modèles</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function StepBar({step, total=6}){
+  return (
+    <div style={{display:"flex",gap:4,marginBottom:"1.25rem"}}>
+      {Array.from({length:total}).map((_,i)=>(
+        <div key={i} style={{flex:1,height:4,borderRadius:2,background:i<step?"var(--blue)":"var(--pierre)"}}></div>
+      ))}
+    </div>
+  );
+}
+
+function LibreFlow({db, nav, setResult}){
+  const [step,setStep] = useState(1);
+  const [type,setType] = useState(null);
+  const [cireId,setCireId] = useState(null);
+  const [poids,setPoids] = useState(300);
+  const [parfumOn,setParfumOn] = useState(null);
+  const [couleur,setCouleur] = useState(null);
+  const [parfumId,setParfumId] = useState(db.parfums[0]?.id||null);
+  const [parfumPct,setParfumPct] = useState(8);
+  const [myristatePct,setMyristatePct] = useState(7.5);
+  const [stearinePct,setStearinePct] = useState(10);
+  const [cs6000Pct,setCs6000Pct] = useState(0.3);
+  const [ww16On,setWw16On] = useState(false);
+  const [ww16Pct] = useState(0.02);
+  const [colorantId,setColorantId] = useState(db.colorants[0]?.id||null);
+  const [colorantPct,setColorantPct] = useState(0.3);
+
+  const cire = db.cires.find(c=>c.id===cireId);
+
+  function goCalc(){
+    const r = calcRecette({poids, parfumOn, parfumPct, myristatePct, stearinePct, cs6000Pct, ww16On, ww16Pct, colorantOn: couleur==="couleur", colorantPct});
+    const colorant = db.colorants.find(c=>c.id===colorantId);
+    const parfum = db.parfums.find(p=>p.id===parfumId);
+    setResult({
+      type, cire, poids, parfumOn, colorMode: couleur,
+      composition: r,
+      parfum: parfumOn ? parfum : null,
+      colorant: couleur==="couleur" ? colorant : null,
+      ww16On,
+      stearinePct, cs6000Pct, ww16Pct, colorantPct, parfumPct, myristatePct,
+      mecheRef: "" // to be filled on fiche
+    });
+    nav("fiche");
+  }
+
+  if(step===1) return (
+    <div className="screen">
+      <StepBar step={1}/>
+      <p style={{fontSize:12,color:"var(--grey)",margin:"0 0 4px"}}>Étape 1 sur 6</p>
+      <h2 style={{fontSize:20,marginBottom:"1.5rem"}}>Moulée ou coulée ?</h2>
+      <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:"2rem"}}>
+        <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,borderColor: type==="M"?"var(--blue)":undefined, borderWidth:type==="M"?2:undefined}} onClick={()=>{setType("M");setStep(2);}}>
+          <i className="ti ti-cube" style={{fontSize:22,color:"var(--blue)",marginRight:10}}></i>Moulée
+        </button>
+        <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12}} onClick={()=>{setType("C");setStep(2);}}>
+          <i className="ti ti-droplet" style={{fontSize:22,color:"var(--blue)",marginRight:10}}></i>Coulée
+        </button>
+      </div>
+      <button className="backbtn" onClick={()=>nav("home")}>← Retour à l'accueil</button>
+    </div>
+  );
+
+  if(step===2) return (
+    <div className="screen">
+      <StepBar step={2}/>
+      <p style={{fontSize:12,color:"var(--grey)",margin:"0 0 4px"}}>Étape 2 sur 6</p>
+      <h2 style={{fontSize:20,marginBottom:4}}>Choisis ta cire</h2>
+      <div style={{display:"flex",flexDirection:"column",gap:8,margin:"1rem 0 2rem"}}>
+        {db.cires.map(c=>(
+          <button key={c.id} className="btn-secondary" style={{textAlign:"left",padding:"1rem",borderRadius:12,borderColor:cireId===c.id?"var(--blue)":undefined,borderWidth:cireId===c.id?2:undefined}} onClick={()=>setCireId(c.id)}>
+            <div style={{fontWeight:500,fontSize:14}}>{c.nom}</div>
+            <div style={{fontSize:12,color:"var(--grey)",marginTop:2}}>Fonte {c.fonte}°C — Mèche suggérée : {c.meche}</div>
+          </button>
+        ))}
+      </div>
+      <div style={{display:"flex",gap:8}}>
+        <button className="btn-secondary" style={{flex:1}} onClick={()=>setStep(1)}>← Retour</button>
+        <button className="btn-primary" style={{flex:1}} disabled={!cireId} onClick={()=>setStep(3)}>Suivant</button>
+      </div>
+    </div>
+  );
+
+  if(step===3) return (
+    <div className="screen">
+      <StepBar step={3}/>
+      <p style={{fontSize:12,color:"var(--grey)",margin:"0 0 4px"}}>Étape 3 sur 6</p>
+      <h2 style={{fontSize:20,marginBottom:"1.5rem"}}>Poids de la bougie</h2>
+      <label className="label">Saisie manuelle (g)</label>
+      <input type="number" value={poids} onChange={e=>setPoids(Number(e.target.value))} style={{marginBottom:16}}/>
+      <p style={{fontSize:13,color:"var(--greydark)",margin:"0 0 8px"}}>ou choisir un modèle</p>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:"2rem"}}>
+        {db.modeles.map(m=>(
+          <button key={m.id} className="btn-secondary row" onClick={()=>setPoids(m.poids)}>
+            <span>{m.nom}</span><span className="mono" style={{color:"var(--grey)"}}>{m.poids} g</span>
+          </button>
+        ))}
+      </div>
+      <div style={{display:"flex",gap:8}}>
+        <button className="btn-secondary" style={{flex:1}} onClick={()=>setStep(2)}>← Retour</button>
+        <button className="btn-primary" style={{flex:1}} onClick={()=>setStep(4)}>Suivant</button>
+      </div>
+    </div>
+  );
+
+  if(step===4) return (
+    <div className="screen">
+      <StepBar step={4}/>
+      <p style={{fontSize:12,color:"var(--grey)",margin:"0 0 4px"}}>Étape 4 sur 6</p>
+      <h2 style={{fontSize:20,marginBottom:"1.5rem"}}>Parfum ou sans parfum ?</h2>
+      <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:"2rem"}}>
+        <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,borderColor:parfumOn===true?"var(--blue)":undefined,borderWidth:parfumOn===true?2:undefined}} onClick={()=>setParfumOn(true)}>
+          <i className="ti ti-droplet" style={{fontSize:22,color:"var(--blue)",marginRight:10}}></i>Parfumée
+        </button>
+        <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,borderColor:parfumOn===false?"var(--blue)":undefined,borderWidth:parfumOn===false?2:undefined}} onClick={()=>setParfumOn(false)}>
+          <i className="ti ti-droplet-off" style={{fontSize:22,color:"var(--grey)",marginRight:10}}></i>Sans parfum
+        </button>
+      </div>
+      <div style={{display:"flex",gap:8}}>
+        <button className="btn-secondary" style={{flex:1}} onClick={()=>setStep(3)}>← Retour</button>
+        <button className="btn-primary" style={{flex:1}} disabled={parfumOn===null} onClick={()=>setStep(5)}>Suivant</button>
+      </div>
+    </div>
+  );
+
+  if(step===5) return (
+    <div className="screen">
+      <StepBar step={5}/>
+      <p style={{fontSize:12,color:"var(--grey)",margin:"0 0 4px"}}>Étape 5 sur 6</p>
+      <h2 style={{fontSize:20,marginBottom:"1.5rem"}}>Couleur ou blanc ?</h2>
+      <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:"2rem"}}>
+        <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,borderColor:couleur==="couleur"?"var(--blue)":undefined,borderWidth:couleur==="couleur"?2:undefined}} onClick={()=>setCouleur("couleur")}>
+          <span style={{display:"inline-block",width:20,height:20,borderRadius:"50%",background:"var(--red)",marginRight:10,verticalAlign:"middle"}}></span>Couleur
+        </button>
+        <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,borderColor:couleur==="blanc"?"var(--blue)":undefined,borderWidth:couleur==="blanc"?2:undefined}} onClick={()=>setCouleur("blanc")}>
+          <span style={{display:"inline-block",width:20,height:20,borderRadius:"50%",background:"#fff",border:"1.5px solid var(--pierre)",marginRight:10,verticalAlign:"middle"}}></span>Blanc
+        </button>
+      </div>
+      <div style={{display:"flex",gap:8}}>
+        <button className="btn-secondary" style={{flex:1}} onClick={()=>setStep(4)}>← Retour</button>
+        <button className="btn-primary" style={{flex:1}} disabled={!couleur} onClick={()=>setStep(6)}>Suivant</button>
+      </div>
+    </div>
+  );
+
+  // step 6: additifs
+  return (
+    <div className="screen">
+      <StepBar step={6}/>
+      <p style={{fontSize:12,color:"var(--grey)",margin:"0 0 4px"}}>Étape 6 sur 6</p>
+      <h2 style={{fontSize:20,marginBottom:4}}>Additifs</h2>
+      <p style={{fontSize:13,color:"var(--grey)",margin:"0 0 1.25rem"}}>Valeurs préremplies, modifiables librement</p>
+      <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:"1.5rem"}}>
+        <div className="card">
+          <div className="row"><span style={{fontWeight:500,fontSize:14}}>Stéarine</span>
+            <span><input type="number" value={stearinePct} onChange={e=>setStearinePct(Number(e.target.value))} style={{width:70,display:"inline-block"}}/> %</span></div>
+        </div>
+        <div className="card">
+          <div className="row"><span style={{fontWeight:500,fontSize:14}}>CS6000 <span style={{fontWeight:400,color:"var(--grey)"}}>— stabilisateur</span></span>
+            <span><input type="number" step="0.1" value={cs6000Pct} onChange={e=>setCs6000Pct(Number(e.target.value))} style={{width:70,display:"inline-block"}}/> %</span></div>
+        </div>
+        {couleur==="blanc" && (
+          <div className="card">
+            <div className="row">
+              <label style={{fontWeight:500,fontSize:14,display:"flex",alignItems:"center",gap:8}}>
+                <input type="checkbox" checked={ww16On} onChange={e=>setWw16On(e.target.checked)}/> WW16 — blanchisseur
+              </label>
+              <span className="mono" style={{color:"var(--grey)"}}>{ww16On ? ww16Pct+"%" : "None"}</span>
+            </div>
+          </div>
+        )}
+        {couleur==="couleur" && (
+          <div className="card">
+            <p style={{fontSize:14,fontWeight:500,margin:"0 0 8px"}}>Colorant</p>
+            <select value={colorantId||""} onChange={e=>setColorantId(Number(e.target.value))} style={{marginBottom:8}}>
+              {db.colorants.map(c=><option key={c.id} value={c.id}>{c.nom} — {c.ref}</option>)}
+            </select>
+            <div className="row"><span style={{fontSize:12,color:"var(--grey)"}}>Dosage</span>
+              <span><input type="number" step="0.1" value={colorantPct} onChange={e=>setColorantPct(Number(e.target.value))} style={{width:70,display:"inline-block"}}/> %</span></div>
+          </div>
+        )}
+        {parfumOn && (
+          <div className="card">
+            <p style={{fontSize:14,fontWeight:500,margin:"0 0 8px"}}>Parfum</p>
+            <select value={parfumId||""} onChange={e=>{
+              setParfumId(Number(e.target.value));
+              const p = db.parfums.find(x=>x.id===Number(e.target.value));
+              if(p){ const d = String(p.dosage).split("-")[0]; setParfumPct(Number(d)||8); }
+            }} style={{marginBottom:8}}>
+              {db.parfums.map(p=><option key={p.id} value={p.id}>{p.nom} — {p.dosage}%</option>)}
+            </select>
+            <div className="row"><span style={{fontSize:12,color:"var(--grey)"}}>Dosage</span>
+              <span><input type="number" value={parfumPct} onChange={e=>setParfumPct(Number(e.target.value))} style={{width:70,display:"inline-block"}}/> %</span></div>
+          </div>
+        )}
+        {parfumOn && (
+          <div className="card">
+            <div className="row"><span style={{fontWeight:500,fontSize:14}}>Myristate d'isopropyle</span>
+              <span><input type="number" step="0.5" value={myristatePct} onChange={e=>setMyristatePct(Number(e.target.value))} style={{width:70,display:"inline-block"}}/> %</span></div>
+            <p style={{fontSize:11,color:"var(--grey)",margin:"4px 0 0"}}>% du poids de parfum</p>
+          </div>
+        )}
+      </div>
+      <div style={{display:"flex",gap:8}}>
+        <button className="btn-secondary" style={{flex:1}} onClick={()=>setStep(5)}>← Retour</button>
+        <button className="btn-primary" style={{flex:1}} onClick={goCalc}>Calculer</button>
+      </div>
+    </div>
+  );
+}
+
+function FicheResultat({result, db, nav}){
+  if(!result) return <div className="screen"><button className="backbtn" onClick={()=>nav("home")}>← Accueil</button></div>;
+  const {cire, poids, composition:c, parfum, colorant, ww16On, stearinePct, cs6000Pct, ww16Pct, colorantPct, parfumPct, myristatePct} = result;
+
+  const total = c.cirePure + c.stearineG + c.cs6000G + c.ww16G + c.colorantG + c.parfumG + c.myristateG;
+  const coutCire = cire ? (c.cirePure/1000)*(cire.prix/(cire.qte/1000)) : 0;
+  const coutStearine = db.additifs.find(a=>a.nom==="Stéarine") ? (c.stearineG/db.additifs.find(a=>a.nom==="Stéarine").qte)*db.additifs.find(a=>a.nom==="Stéarine").prix : 0;
+  const cs6000Item = db.additifs.find(a=>a.nom==="CS6000");
+  const coutCs6000 = cs6000Item ? (c.cs6000G/cs6000Item.qte)*cs6000Item.prix : 0;
+  const ww16Item = db.additifs.find(a=>a.nom==="WW16");
+  const coutWw16 = (ww16On && ww16Item) ? (c.ww16G/ww16Item.qte)*ww16Item.prix : 0;
+  const coutColorant = colorant ? (c.colorantG/colorant.qte)*colorant.prix : 0;
+  const coutParfum = parfum ? (c.parfumG/parfum.qte)*parfum.prix : 0;
+  const myrItem = db.additifs.find(a=>a.nom==="Myristate d'isopropyle");
+  const coutMyristate = (parfum && myrItem) ? (c.myristateG/myrItem.qte)*myrItem.prix : 0;
+  const coutTotal = coutCire+coutStearine+coutCs6000+coutWw16+coutColorant+coutParfum+coutMyristate;
+  const prixPublic = coutTotal*5;
+  const prixB2B = prixPublic/2;
+
+  const pieData = [
+    {label:"Cire", value:(c.cirePure/total)*100, color:"#1E2FB8"},
+    {label:"Stéarine", value:(c.stearineG/total)*100, color:"#D7263D"},
+  ];
+  if(parfum) pieData.push({label:"Parfum", value:(c.parfumG/total)*100, color:"#F5C518"});
+  if(parfum) pieData.push({label:"Myristate", value:(c.myristateG/total)*100, color:"#D9D2C3"});
+  pieData.push({label:"CS6000", value:(c.cs6000G/total)*100, color:"#1A1613"});
+  if(colorant) pieData.push({label:"Colorant", value:(c.colorantG/total)*100, color:"#8a8272"});
+
+  return (
+    <div className="screen">
+      <button className="backbtn" onClick={()=>nav("home")}>← Accueil</button>
+      <h2 style={{fontSize:20,marginBottom:4}}>{cire.nom} — {result.type==="M"?"moulée":"coulée"}</h2>
+      <p style={{fontSize:13,color:"var(--grey)",margin:"0 0 1rem"}}>{poids} g total</p>
+
+      <PieChart data={pieData}/>
+
+      <p style={{fontSize:12,color:"var(--grey)",margin:"1rem 0 8px"}}>Coûts et prix conseillés (×5)</p>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:8,marginBottom:"1.25rem"}}>
+        <div className="card" style={{textAlign:"center"}}><p style={{fontSize:11,color:"var(--grey)",margin:"0 0 4px"}}>Coût</p><p className="mono" style={{fontSize:15,fontWeight:500,margin:0}}>{coutTotal.toFixed(2)}€</p></div>
+        <div style={{background:"var(--pierre)",borderRadius:10,padding:"0.75rem",textAlign:"center"}}><p style={{fontSize:11,color:"var(--greydark)",margin:"0 0 4px"}}>B2B</p><p className="mono" style={{fontSize:15,fontWeight:500,margin:0}}>{prixB2B.toFixed(2)}€</p></div>
+        <div style={{background:"var(--blue)",borderRadius:10,padding:"0.75rem",textAlign:"center"}}><p style={{fontSize:11,color:"#c9cff2",margin:"0 0 4px"}}>Public</p><p className="mono" style={{fontSize:15,fontWeight:500,margin:0,color:"var(--ecru)"}}>{prixPublic.toFixed(2)}€</p></div>
+      </div>
+
+      <p style={{fontSize:12,color:"var(--grey)",margin:"0 0 8px"}}>Composition et coût</p>
+      <table style={{width:"100%",fontSize:14,borderCollapse:"collapse",marginBottom:"1.25rem"}}>
+        <tbody>
+          <tr style={{borderBottom:"0.5px solid var(--pierre)"}}><td style={{padding:"8px 0"}}>{cire.nom}</td><td className="mono" style={{textAlign:"right"}}>{c.cirePure.toFixed(1)} g</td><td className="mono" style={{textAlign:"right"}}>{coutCire.toFixed(2)}€</td></tr>
+          <tr style={{borderBottom:"0.5px solid var(--pierre)"}}><td style={{padding:"8px 0"}}>Stéarine</td><td className="mono" style={{textAlign:"right"}}>{c.stearineG.toFixed(1)} g</td><td className="mono" style={{textAlign:"right"}}>{coutStearine.toFixed(2)}€</td></tr>
+          <tr style={{borderBottom:"0.5px solid var(--pierre)"}}><td style={{padding:"8px 0"}}>CS6000</td><td className="mono" style={{textAlign:"right"}}>{c.cs6000G.toFixed(1)} g</td><td className="mono" style={{textAlign:"right"}}>{coutCs6000.toFixed(2)}€</td></tr>
+          <tr style={{borderBottom:"0.5px solid var(--pierre)"}}><td style={{padding:"8px 0"}}>WW16</td><td className="mono" style={{textAlign:"right",color:"var(--grey)"}}>{ww16On?c.ww16G.toFixed(2)+" g":"None"}</td><td className="mono" style={{textAlign:"right",color:"var(--grey)"}}>{ww16On?coutWw16.toFixed(2)+"€":"None"}</td></tr>
+          <tr style={{borderBottom:"0.5px solid var(--pierre)"}}><td style={{padding:"8px 0"}}>{colorant ? "Colorant ("+colorant.nom+")" : "Colorant"}</td><td className="mono" style={{textAlign:"right",color:colorant?undefined:"var(--grey)"}}>{colorant?c.colorantG.toFixed(1)+" g":"None"}</td><td className="mono" style={{textAlign:"right",color:colorant?undefined:"var(--grey)"}}>{colorant?coutColorant.toFixed(2)+"€":"None"}</td></tr>
+          <tr style={{borderBottom:"0.5px solid var(--pierre)"}}><td style={{padding:"8px 0"}}>{parfum ? "Parfum ("+parfum.nom+")" : "Parfum"}</td><td className="mono" style={{textAlign:"right",color:parfum?undefined:"var(--grey)"}}>{parfum?c.parfumG.toFixed(1)+" g":"None"}</td><td className="mono" style={{textAlign:"right",color:parfum?undefined:"var(--grey)"}}>{parfum?coutParfum.toFixed(2)+"€":"None"}</td></tr>
+          <tr><td style={{padding:"8px 0"}}>Myristate</td><td className="mono" style={{textAlign:"right",color:parfum?undefined:"var(--grey)"}}>{parfum?c.myristateG.toFixed(1)+" g":"None"}</td><td className="mono" style={{textAlign:"right",color:parfum?undefined:"var(--grey)"}}>{parfum?coutMyristate.toFixed(2)+"€":"None"}</td></tr>
+        </tbody>
+      </table>
+
+      <p style={{fontSize:12,color:"var(--grey)",margin:"0 0 8px"}}>Séquence de température</p>
+      <div style={{fontSize:13,marginBottom:"1.25rem",display:"flex",flexDirection:"column",gap:6}}>
+        <div className="row"><span style={{color:"var(--greydark)"}}>1. Stéarine + CS6000</span><span>fonte initiale</span></div>
+        {ww16On && <div className="row"><span style={{color:"var(--greydark)"}}>2. WW16</span><span>cire fondue</span></div>}
+        {colorant && <div className="row"><span style={{color:"var(--greydark)"}}>3. Colorant</span><span>≥ 70°C</span></div>}
+        {parfum && <div className="row"><span style={{color:"var(--greydark)"}}>4. Parfum + myristate</span><span>75–80°C</span></div>}
+      </div>
+
+      <button className="btn-primary" style={{width:"100%",padding:14,fontSize:15}} onClick={()=>nav("checklist")}>Concevoir</button>
+    </div>
+  );
+}
+
+function Checklist({result, db, setDb, nav, setLastCode}){
+  const [mecheRef,setMecheRef] = useState("");
+  const [checks,setChecks] = useState({});
+  if(!result) return null;
+  const {cire, composition:c, parfum, colorant, ww16On} = result;
+  const items = [
+    {key:"base", label:cire.nom+" + Stéarine + CS6000", temp:"fonte initiale", g:(c.cirePure+c.stearineG+c.cs6000G).toFixed(1)+" g"},
+  ];
+  if(ww16On) items.push({key:"ww16", label:"WW16", temp:"cire fondue", g:c.ww16G.toFixed(2)+" g"});
+  if(colorant) items.push({key:"colorant", label:"Colorant — "+colorant.nom, temp:"≥ 70°C", g:c.colorantG.toFixed(1)+" g"});
+  if(parfum) items.push({key:"parfum", label:"Parfum + Myristate", temp:"75–80°C", g:(c.parfumG+c.myristateG).toFixed(1)+" g"});
+
+  const allChecked = items.every(i=>checks[i.key]);
+
+  function encoder(){
+    const code = genCode(db, result.type, mecheRef);
+    const now = new Date();
+    const entry = {
+      code, date: now.toISOString(), modele: cire.nom, type: result.type, poids: result.poids,
+      composition: c, parfum: parfum?{nom:parfum.nom}:null, colorant: colorant?{nom:colorant.nom, hex:colorant.hex}:null,
+      ww16On, mecheRef, rating:{combustion:0,diffusion:0,aspect:0}, note:"",
+    };
+    const newDb = {...db, historique:[entry, ...db.historique], compteur: db.compteur+1};
+    setDb(newDb); saveDB(newDb);
+    setLastCode(code);
+    nav("confirmation");
+  }
+
+  return (
+    <div className="screen">
+      <h2 style={{fontSize:20,marginBottom:8}}>Conception</h2>
+      <label className="label">Référence de mèche utilisée</label>
+      <input value={mecheRef} onChange={e=>setMecheRef(e.target.value)} placeholder="ex. TCR 24/12" style={{marginBottom:"1.25rem"}}/>
+      <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:"1.25rem"}}>
+        {items.map(it=>(
+          <label key={it.key} className="card" style={{display:"flex",alignItems:"center",gap:12}}>
+            <input type="checkbox" checked={!!checks[it.key]} onChange={e=>setChecks({...checks,[it.key]:e.target.checked})}/>
+            <div style={{flex:1}}>
+              <p style={{fontSize:14,fontWeight:500,margin:0}}>{it.label}</p>
+              <p style={{fontSize:12,color:"var(--grey)",margin:"2px 0 0"}}>{it.temp}</p>
+            </div>
+            <span className="mono" style={{fontSize:14}}>{it.g}</span>
+          </label>
+        ))}
+      </div>
+      <button className="btn-primary" style={{width:"100%",padding:14,fontSize:15,opacity:allChecked?1:0.4,background:allChecked?"var(--blue)":"var(--pierre)",color:allChecked?"var(--ecru)":"var(--grey)"}} disabled={!allChecked} onClick={encoder}>Encoder dans l'historique</button>
+    </div>
+  );
+}
+
+function Confirmation({code, nav}){
+  return (
+    <div className="screen" style={{textAlign:"center"}}>
+      <div style={{width:56,height:56,borderRadius:"50%",background:"var(--blue)",display:"flex",alignItems:"center",justifyContent:"center",margin:"2rem auto 1.25rem"}}>
+        <i className="ti ti-check" style={{fontSize:28,color:"var(--ecru)"}}></i>
+      </div>
+      <h2 style={{fontSize:20,marginBottom:8}}>Encodée dans l'historique</h2>
+      <div className="chip" style={{margin:"1.25rem 0"}}>{code}</div>
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        <button className="btn-primary" onClick={()=>nav("home")}>Retour à l'accueil</button>
+        <button className="btn-secondary" onClick={()=>nav("historique")}>Voir dans l'historique</button>
+      </div>
+    </div>
+  );
+}
+
+function Historique({db, nav, setDetailCode}){
+  const [q,setQ] = useState("");
+  const filtered = db.historique.filter(h=>h.code.toLowerCase().includes(q.toLowerCase())||h.modele.toLowerCase().includes(q.toLowerCase()));
+
+  function exportCSV(){
+    const headers = ["code","date","modele","type","poids","parfum","colorant","note"];
+    const rows = db.historique.map(h=>[h.code, h.date, h.modele, h.type, h.poids, h.parfum?.nom||"", h.colorant?.nom||"", h.note||""]);
+    const csv = [headers.join(","), ...rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(","))].join("\n");
+    const d = new Date();
+    const yy=String(d.getFullYear()).slice(2), mm=String(d.getMonth()+1).padStart(2,"0"), dd=String(d.getDate()).padStart(2,"0");
+    const blob = new Blob([csv], {type:"text/csv"});
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `MC${yy}${mm}${dd}-backup-creations.csv`;
+    link.click();
+  }
+
+  return (
+    <div className="screen">
+      <button className="backbtn" onClick={()=>nav("home")}>← Accueil</button>
+      <div className="row" style={{marginBottom:"1rem"}}>
+        <h2 style={{fontSize:20}}>Historique</h2>
+        <button className="btn-secondary" style={{padding:"8px 12px",fontSize:13}} onClick={exportCSV}>⬇ Exporter tout</button>
+      </div>
+      <input placeholder="Rechercher par code, modèle..." value={q} onChange={e=>setQ(e.target.value)} style={{marginBottom:"1rem"}}/>
+      {filtered.length===0 && <p style={{color:"var(--grey)",fontSize:14}}>Aucune création pour l'instant.</p>}
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        {filtered.map(h=>{
+          const avg = (h.rating.combustion+h.rating.diffusion+h.rating.aspect);
+          const cnt = [h.rating.combustion,h.rating.diffusion,h.rating.aspect].filter(v=>v>0).length;
+          const note = cnt? (avg/cnt).toFixed(1) : null;
+          return (
+            <button key={h.code} className="card" style={{textAlign:"left",cursor:"pointer"}} onClick={()=>{setDetailCode(h.code); nav("historique-detail");}}>
+              <div className="mono" style={{fontSize:13}}>{h.code}</div>
+              <div style={{fontSize:12,color:"var(--grey)",marginTop:2}}>{h.modele} — {h.type==="M"?"moulée":"coulée"} — {h.poids} g {note && <span className="mono" style={{color:"#8a6d0c",fontWeight:500}}>· {note}/5</span>}</div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function HistoriqueDetail({db, setDb, code, nav}){
+  const entry = db.historique.find(h=>h.code===code);
+  const [rating,setRating] = useState(entry?entry.rating:{combustion:0,diffusion:0,aspect:0});
+  const [note,setNote] = useState(entry?entry.note:"");
+  if(!entry) return <div className="screen"><button className="backbtn" onClick={()=>nav("historique")}>← Historique</button></div>;
+
+  function save(){
+    const newHist = db.historique.map(h=> h.code===code ? {...h, rating, note} : h);
+    const newDb = {...db, historique:newHist};
+    setDb(newDb); saveDB(newDb);
+  }
+
+  const c = entry.composition;
+  return (
+    <div className="screen">
+      <button className="backbtn" onClick={()=>nav("historique")}>← Historique</button>
+      <div className="chip" style={{marginBottom:"1rem"}}>{entry.code}</div>
+      <div style={{background:"var(--encre)",borderRadius:8,padding:"0.6rem 1rem",textAlign:"center",marginBottom:"1.25rem"}}>
+        <span style={{fontSize:12,color:"var(--ecru)"}}>Création archivée — lecture seule</span>
+      </div>
+      <div className="row" style={{marginBottom:"1rem"}}>
+        <h2 style={{fontSize:20}}>{entry.modele} — {entry.type==="M"?"moulée":"coulée"}</h2>
+        <span style={{fontSize:13,color:"var(--grey)"}}>{entry.poids} g</span>
+      </div>
+      <table style={{width:"100%",fontSize:14,marginBottom:"1.25rem"}}>
+        <tbody>
+          <tr style={{borderBottom:"0.5px solid var(--pierre)"}}><td style={{padding:"8px 0"}}>Cire</td><td className="mono" style={{textAlign:"right"}}>{c.cirePure.toFixed(1)} g</td></tr>
+          <tr><td style={{padding:"8px 0"}}>Stéarine</td><td className="mono" style={{textAlign:"right"}}>{c.stearineG.toFixed(1)} g</td></tr>
+        </tbody>
+      </table>
+
+      <p style={{fontSize:12,color:"var(--grey)",margin:"0 0 10px"}}>Évaluation</p>
+      <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:"1.25rem"}}>
+        <div className="row"><span style={{fontSize:14}}>Combustion</span><Stars value={rating.combustion} onChange={v=>setRating({...rating,combustion:v})}/></div>
+        <div className="row"><span style={{fontSize:14}}>Diffusion du parfum</span><Stars value={rating.diffusion} onChange={v=>setRating({...rating,diffusion:v})}/></div>
+        <div className="row"><span style={{fontSize:14}}>Aspect visuel</span><Stars value={rating.aspect} onChange={v=>setRating({...rating,aspect:v})}/></div>
+      </div>
+      <label className="label">Note</label>
+      <textarea rows="4" value={note} onChange={e=>setNote(e.target.value)} placeholder="Observations libres..." style={{marginBottom:"1rem"}}></textarea>
+      <button className="btn-primary" style={{width:"100%"}} onClick={save}>Enregistrer l'évaluation</button>
+    </div>
+  );
+}
+
+function Formules({db, nav, setResult}){
+  const [selected,setSelected] = useState(null);
+  if(selected){
+    const m = db.modeles.find(x=>x.id===selected);
+    return (
+      <div className="screen">
+        <button className="backbtn" onClick={()=>setSelected(null)}>← Formules approuvées</button>
+        <h2 style={{fontSize:20,marginBottom:4}}>{m.nom}</h2>
+        <p style={{fontSize:13,color:"var(--grey)",margin:"0 0 1.5rem"}}>{m.poids} g — choisis la version</p>
+        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,opacity:m.formuleAvecParfum?1:0.4}} disabled={!m.formuleAvecParfum} onClick={()=>{setResult(m.formuleAvecParfum); nav("fiche");}}>
+            Avec parfum {!m.formuleAvecParfum && <span style={{fontSize:12,color:"var(--grey)"}}>(non approuvée)</span>}
+          </button>
+          <button className="btn-secondary" style={{textAlign:"left",padding:"1.1rem",borderRadius:12,opacity:m.formuleSansParfum?1:0.4}} disabled={!m.formuleSansParfum} onClick={()=>{setResult(m.formuleSansParfum); nav("fiche");}}>
+            Sans parfum {!m.formuleSansParfum && <span style={{fontSize:12,color:"var(--grey)"}}>(non approuvée)</span>}
+          </button>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="screen">
+      <button className="backbtn" onClick={()=>nav("home")}>← Accueil</button>
+      <h2 style={{fontSize:20,marginBottom:"1rem"}}>Formules approuvées</h2>
+      <div style={{display:"flex",flexDirection:"column",gap:10}}>
+        {db.modeles.map(m=>(
+          <button key={m.id} className="card" style={{textAlign:"left",cursor:"pointer"}} onClick={()=>setSelected(m.id)}>
+            <div style={{fontWeight:500}}>{m.nom}</div>
+            <div style={{fontSize:12,color:"var(--grey)",marginTop:2}}>{m.poids} g</div>
+          </button>
+        ))}
+      </div>
+      <p style={{fontSize:12,color:"var(--grey)",marginTop:"1rem"}}>Approuve une formule depuis "Gérer mon inventaire → Modèles / formats" en calculant d'abord une recette en mode libre.</p>
+    </div>
+  );
+}
+
+// ---------- Inventaire ----------
+const CATEGORIES = [
+  {key:"cires", label:"Cires", icon:"ti-flask"},
+  {key:"meches", label:"Mèches", icon:"ti-flame"},
+  {key:"parfums", label:"Parfums", icon:"ti-spray"},
+  {key:"colorants", label:"Colorants", icon:"ti-palette"},
+  {key:"additifs", label:"Additifs", icon:"ti-atom-2"},
+  {key:"modeles", label:"Modèles / formats", icon:"ti-hexagon"},
+];
+
+function InventaireHome({db, nav, setCat}){
+  return (
+    <div className="screen">
+      <button className="backbtn" onClick={()=>nav("home")}>← Accueil</button>
+      <h2 style={{fontSize:20,marginBottom:"1rem"}}>Gérer mon inventaire</h2>
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        {CATEGORIES.map(c=>(
+          <button key={c.key} className="card" style={{textAlign:"left",cursor:"pointer",display:"flex",alignItems:"center",gap:12}} onClick={()=>{setCat(c.key); nav("inventaire-liste");}}>
+            <i className={"ti "+c.icon} style={{fontSize:20,color:"var(--blue)"}}></i>
+            <span style={{flex:1,fontWeight:500,fontSize:14}}>{c.label}</span>
+            <span style={{fontSize:12,color:"var(--grey)"}}>{db[c.key].length}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function fieldsFor(cat){
+  switch(cat){
+    case "cires": return [
+      {k:"nom",l:"Nom",t:"text"}, {k:"ref",l:"Référence produit / SKU",t:"text"}, {k:"url",l:"Lien produit",t:"url"},
+      {k:"meche",l:"Gamme de mèche suggérée",t:"select",opts:["TCR","LX","ECO / STABILO"]},
+      {k:"fonte",l:"Fonte conseillée (°C)",t:"number"}, {k:"coulage",l:"Coulage conseillé (°C)",t:"number"},
+      {k:"prix",l:"Prix d'achat (€)",t:"number"}, {k:"qte",l:"Quantité (g)",t:"number"},
+    ];
+    case "meches": return [
+      {k:"nom",l:"Nom / référence",t:"text"}, {k:"gamme",l:"Gamme",t:"select",opts:["TCR","LX","ECO / STABILO"]},
+      {k:"type",l:"Type",t:"select",opts:["Socle","Bobine"]},
+      {k:"diametre",l:"Diamètre indiqué (cm)",t:"number"}, {k:"hauteur",l:"Hauteur de mèche (cm)",t:"number", showIf:(v)=>v.type==="Socle"},
+      {k:"prix",l:"Prix d'achat (€)",t:"number"}, {k:"qte",l:"Quantité (unités)",t:"number"},
+    ];
+    case "parfums": return [
+      {k:"nom",l:"Nom",t:"text"}, {k:"fournisseur",l:"Fournisseur",t:"text"}, {k:"ref",l:"Référence produit / SKU",t:"text"}, {k:"url",l:"Lien produit",t:"url"},
+      {k:"dosage",l:"Dosage recommandé (%)",t:"text"}, {k:"pointEclair",l:"Point éclair (°C)",t:"number"},
+      {k:"noteTete",l:"Notes de tête",t:"text"}, {k:"noteCoeur",l:"Notes de cœur",t:"text"}, {k:"noteFond",l:"Notes de fond",t:"text"},
+      {k:"prix",l:"Prix d'achat (€)",t:"number"}, {k:"qte",l:"Quantité (ml)",t:"number"},
+    ];
+    case "colorants": return [
+      {k:"nom",l:"Nom",t:"text"}, {k:"hex",l:"Couleur (hex)",t:"color"}, {k:"marque",l:"Marque",t:"text"}, {k:"ref",l:"Référence Bekro",t:"text"},
+      {k:"prix",l:"Prix d'achat (€)",t:"number"}, {k:"qte",l:"Quantité (g)",t:"number"},
+    ];
+    case "additifs": return [
+      {k:"nom",l:"Nom",t:"text"}, {k:"fournisseur",l:"Fournisseur",t:"text"}, {k:"ref",l:"Référence produit / SKU",t:"text"},
+      {k:"dosage",l:"Dosage recommandé (%)",t:"text"},
+      {k:"prix",l:"Prix d'achat (€)",t:"number"}, {k:"qte",l:"Quantité (g)",t:"number"},
+    ];
+    case "modeles": return [
+      {k:"nom",l:"Nom",t:"text"}, {k:"poids",l:"Poids (g)",t:"number"},
+    ];
+  }
+}
+
+function InventaireListe({db, setDb, cat, nav, setEditId}){
+  const items = db[cat];
+  const catLabel = CATEGORIES.find(c=>c.key===cat).label;
+  return (
+    <div className="screen">
+      <button className="backbtn" onClick={()=>nav("inventaire")}>← Inventaire</button>
+      <div className="row" style={{marginBottom:"1.25rem"}}>
+        <h2 style={{fontSize:20}}>{catLabel}</h2>
+        <button className="btn-primary" style={{padding:"8px 12px",fontSize:13}} onClick={()=>{setEditId(null); nav("inventaire-form");}}>+ Ajouter</button>
+      </div>
+      <div style={{display:"flex",flexDirection:"column",gap:8}}>
+        {items.map(it=>(
+          <button key={it.id} className="card" style={{textAlign:"left",cursor:"pointer",display:"flex",alignItems:"center",gap:12}} onClick={()=>{setEditId(it.id); nav("inventaire-form");}}>
+            {cat==="colorants" && <span style={{width:22,height:22,borderRadius:"50%",background:it.hex,flexShrink:0,border:"0.5px solid var(--pierre)"}}></span>}
+            <div style={{flex:1}}>
+              <div style={{fontSize:14,fontWeight:500}}>{it.nom}</div>
+              <div style={{fontSize:12,color:"var(--grey)"}}>
+                {cat==="cires" && `Fonte ${it.fonte}°C — ${it.prix}€`}
+                {cat==="meches" && `${it.gamme} — ${it.type}`}
+                {cat==="parfums" && `${it.fournisseur} — ${it.dosage}%`}
+                {cat==="colorants" && it.ref}
+                {cat==="additifs" && `${it.fournisseur} — ${it.dosage}%`}
+                {cat==="modeles" && `${it.poids} g`}
+              </div>
+            </div>
+            <i className="ti ti-chevron-right" style={{color:"var(--grey)"}}></i>
+          </button>
+        ))}
+        {items.length===0 && <p style={{color:"var(--grey)",fontSize:14}}>Aucune entrée pour l'instant.</p>}
+      </div>
+    </div>
+  );
+}
+
+function InventaireForm({db, setDb, cat, editId, nav}){
+  const existing = editId ? db[cat].find(i=>i.id===editId) : null;
+  const [form,setForm] = useState(existing || {});
+  const [confirmDelete,setConfirmDelete] = useState(false);
+  const [deleteText,setDeleteText] = useState("");
+  const fields = fieldsFor(cat);
+
+  function save(){
+    let newItems;
+    if(editId){
+      newItems = db[cat].map(i=> i.id===editId ? {...form, id:editId} : i);
+    } else {
+      const newId = Math.max(0,...db[cat].map(i=>i.id)) + 1;
+      newItems = [...db[cat], {...form, id:newId}];
+    }
+    const newDb = {...db, [cat]: newItems};
+    setDb(newDb); saveDB(newDb);
+    nav("inventaire-liste");
+  }
+  function del(){
+    const newDb = {...db, [cat]: db[cat].filter(i=>i.id!==editId)};
+    setDb(newDb); saveDB(newDb);
+    nav("inventaire-liste");
+  }
+
+  return (
+    <div className="screen">
+      <button className="backbtn" onClick={()=>nav("inventaire-liste")}>← {CATEGORIES.find(c=>c.key===cat).label}</button>
+      <h2 style={{fontSize:20,marginBottom:"1.25rem"}}>{existing ? existing.nom : "Nouvelle entrée"}</h2>
+      <div style={{display:"flex",flexDirection:"column",gap:14,marginBottom:"1.5rem"}}>
+        {fields.filter(f=>!f.showIf || f.showIf(form)).map(f=>(
+          <div key={f.k}>
+            <label className="label">{f.l}</label>
+            {f.t==="select" ? (
+              <select value={form[f.k]||""} onChange={e=>setForm({...form,[f.k]:e.target.value})}>
+                <option value="">—</option>
+                {f.opts.map(o=><option key={o} value={o}>{o}</option>)}
+              </select>
+            ) : f.t==="color" ? (
+              <div style={{display:"flex",alignItems:"center",gap:12}}>
+                <label style={{position:"relative",cursor:"pointer"}}>
+                  <span style={{display:"block",width:44,height:44,borderRadius:"50%",background:form[f.k]||"#D7263D",border:"0.5px solid var(--pierre)"}}></span>
+                  <input type="color" value={form[f.k]||"#D7263D"} onChange={e=>setForm({...form,[f.k]:e.target.value})} style={{position:"absolute",opacity:0,width:44,height:44,top:0,left:0,cursor:"pointer"}}/>
+                </label>
+                <input value={form[f.k]||""} onChange={e=>setForm({...form,[f.k]:e.target.value})} style={{flex:1}}/>
+              </div>
+            ) : (
+              <input type={f.t} value={form[f.k]??""} onChange={e=>setForm({...form,[f.k]: f.t==="number"?Number(e.target.value):e.target.value})}/>
+            )}
+          </div>
+        ))}
+      </div>
+      <button className="btn-primary" style={{width:"100%",marginBottom:8}} onClick={save}>Enregistrer</button>
+      {existing && !confirmDelete && (
+        <button className="btn-danger" style={{width:"100%"}} onClick={()=>setConfirmDelete(true)}>🗑 Supprimer cette entrée</button>
+      )}
+      {existing && confirmDelete && (
+        <div className="card" style={{borderColor:"var(--red)"}}>
+          <p style={{fontSize:13,marginBottom:8}}>Tape DELETE pour confirmer la suppression.</p>
+          <input value={deleteText} onChange={e=>setDeleteText(e.target.value)} placeholder="DELETE" style={{marginBottom:8}}/>
+          <div style={{display:"flex",gap:8}}>
+            <button className="btn-secondary" style={{flex:1}} onClick={()=>setConfirmDelete(false)}>Annuler</button>
+            <button className="btn-danger" style={{flex:1}} disabled={deleteText!=="DELETE"} onClick={del}>Supprimer</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ---------- App ----------
+function App(){
+  const [db,setDb] = useState(null);
+  const [syncError,setSyncError] = useState(null);
+  const [screen,setScreen] = useState("home");
+  const [result,setResult] = useState(null);
+  const [lastCode,setLastCode] = useState("");
+  const [detailCode,setDetailCode] = useState(null);
+  const [cat,setCat] = useState("cires");
+  const [editId,setEditId] = useState(null);
+
+  useEffect(()=>{
+    const unsub = DB_DOC.onSnapshot(
+      (snap)=>{
+        if(snap.exists){
+          setDb(snap.data());
+        } else {
+          const seeded = seedDB();
+          DB_DOC.set(seeded).then(()=>setDb(seeded)).catch(e=>setSyncError(String(e)));
+        }
+      },
+      (err)=>{ setSyncError(String(err)); }
+    );
+    return ()=>unsub();
+  },[]);
+
+  function nav(s){ setScreen(s); window.scrollTo(0,0); }
+
+  if(syncError){
+    return <div className="screen"><h2 style={{fontSize:18,color:"var(--red)"}}>Connexion à la base impossible</h2><p style={{fontSize:13,color:"var(--grey)"}}>{syncError}</p></div>;
+  }
+  if(!db){
+    return <div className="screen" style={{textAlign:"center",paddingTop:"4rem"}}><p style={{color:"var(--grey)"}}>Connexion à la base de données…</p></div>;
+  }
+
+  let content;
+  if(screen==="home") content = <Home nav={nav}/>;
+  else if(screen==="libre-type") content = <LibreFlow db={db} nav={nav} setResult={setResult}/>;
+  else if(screen==="fiche") content = <FicheResultat result={result} db={db} nav={nav}/>;
+  else if(screen==="checklist") content = <Checklist result={result} db={db} setDb={setDb} nav={nav} setLastCode={setLastCode}/>;
+  else if(screen==="confirmation") content = <Confirmation code={lastCode} nav={nav}/>;
+  else if(screen==="historique") content = <Historique db={db} nav={nav} setDetailCode={setDetailCode}/>;
+  else if(screen==="historique-detail") content = <HistoriqueDetail db={db} setDb={setDb} code={detailCode} nav={nav}/>;
+  else if(screen==="formules") content = <Formules db={db} nav={nav} setResult={setResult}/>;
+  else if(screen==="inventaire") content = <InventaireHome db={db} nav={nav} setCat={setCat}/>;
+  else if(screen==="inventaire-liste") content = <InventaireListe db={db} setDb={setDb} cat={cat} nav={nav} setEditId={setEditId}/>;
+  else if(screen==="inventaire-form") content = <InventaireForm db={db} setDb={setDb} cat={cat} editId={editId} nav={nav}/>;
+  else content = <Home nav={nav}/>;
+
+  return content;
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
